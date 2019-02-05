@@ -4,7 +4,8 @@ const router = express.Router();
 const APIModule = require('../external/api');
 
 router.post('/signUp', (req, res) => {
-        console.log('signup req body', req.body);
+
+        console.log('signup req body', req.body,req.headers['x-forwarded-for'] , req.connection.remoteAddress);
         APIModule.signUp(req.body,(error,body) => {
             res.send( body );
         })
