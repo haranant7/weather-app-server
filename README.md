@@ -1,4 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a sample Weather app server which exposes a few REST APIs that helps in determining the weather from a list of cities. This uses the OpenWeatherMap API and postgreSQL DB
+How to Install:
+1. Once the repository is cloned, run `npm install` in order to install dependencies.
+2. Run `npm start` to start the nodeJS server
 
 ## Available Scripts
 
@@ -7,62 +10,101 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The app is listening  to port 3001 by default which can be changed in the .env file.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Directory structure :
 
-### `npm test`
+weather-app-server
+|
+|--- .env - configuration file with DB details and API keys to the external API. It contains sample values as of now
+|
+|--- server.js  - the initial server file which Starts the server.
+|
+|---server - folder
+    |
+    |---- data - has capitals.json which is teh list of capitals returned by get/capitals API
+    |---- db
+         |---- postgresSetup.js - One time setup to create the required tables with schema
+         |---- user.js - File to communicate with the DB to fetch data of users
+    |
+    |----external
+         |---- api.js -  Wrapper layer for external APIs 
+         |---- weather.js - Wrapper layer for openWeatherMap APIs
+    |
+    |----routes
+         |---- jwtAuth.js - JWT authentication module
+         |---- route.js - Router for non auth routes
+         |---- routesWeather.js - Router for auth routes
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+API details:
+-----------
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+All APIs will respond with the following error codes 
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+0 - success
+100 - failure
+99 - JWT Token errors
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. POST /signUp  - adds a new User to the DB
+    Request:
+        Header : Content-Type : "application/json"
+        Body : userId - string - denoting the UserId 
+             : pwd - string - denoting the password
 
-### `npm run eject`
+    Response:
+        errorCode 
+        statusMsg
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+2. POST /authenticate  - Verifies an existing user's credentials.
+    Request:
+        Header : Content-Type : "application/json"
+        Body : userId - string - denoting the UserId 
+             : pwd - string - denoting the password
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    Response:
+        errorCode 
+        statusMsg
+        token - string - JWT auth token
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+3. GET /weather/get/capitals  - Gets the list of world capitals
+    Request:
+        Header: Authorization - Bearer token - The JWT auth token obtained from the authenticate request
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    Response:
+        errorCode 
+        data - JSOn Object with the list of capitals and countries
 
-## Learn More
+4. GET /weather/get/favourites  - Gets the list of favourite capitals for the user
+    Request:
+        Header: Authorization - Bearer token - The JWT auth token obtained from the authenticate request
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    Response:
+        errorCode 
+        favouriteCityList - Array of strings containing the User's favourite capital cities. This key is present only if the request is successfull.
+        statusMsg - present only when the request errors out - Has a string describing the error.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+5. POST /weather/post/favourite  - Adds a city to favourite capitals for the user
+    Request:
+        Header : Content-Type : "application/json"
+        Header: Authorization - Bearer token - The JWT auth token obtained from the authenticate request
+        Body : city - string containing name of city
 
-### Code Splitting
+    Response:
+        errorCode 
+        statusMsg
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+6. GET /weather/get/weather  - Gets the current weather for a given city. This internally gets details from the OpenWeatherMap API
+    Request:
+        Header: Authorization - Bearer token - The JWT auth token obtained from the authenticate request
+        Query params - city - name of city
 
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+    Response:
+            weather - the high level weather condition eg:"Rain"
+            weatherIcon - Weather icon id for the open weatherMap API icons
+            weatherDesc - Detailed description of the weather condition eg:"moderate rain",
+            sunrise - sunrise time for the city in 24Hr format 
+            sunset - sunrset time for the city in 24Hr format 
+            temp - current temperature of the city in degree celsius
+            currentTime - current time of the city
+            errorCode
