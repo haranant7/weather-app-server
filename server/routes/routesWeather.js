@@ -1,3 +1,9 @@
+/*
+
+Router for JWT auth routes
+
+*/
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -10,7 +16,6 @@ const captialsJson = require("../data/capitals.json");
 
 router.use(function (req, res, next) {
     jwtAuth.checkToken(req, res, next);
-    //next();
 });
 
 router.get('/get/capitals', (req, res) => {

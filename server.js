@@ -1,5 +1,10 @@
+/*
+
+App server file
+
+*/
+
 const express = require('express');
-const fs = require('fs');
 const router = require('./server/routes/route');
 const routerWeather = require('./server/routes/routesWeather');
 const bodyParser = require('body-parser');

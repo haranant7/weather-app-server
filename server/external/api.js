@@ -1,7 +1,12 @@
+/*
+
+API routes Wrapper layer
+
+*/
+
 const users =  require('../db/users');
 let jwt = require('jsonwebtoken');
 require('dotenv').config();
-
 
 var signUp = (reqBody,callback) => {
     users.addUser(reqBody.userId,reqBody.pwd,(err,res) =>{

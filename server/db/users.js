@@ -1,3 +1,8 @@
+/*
+File to communicate with the DB to fetch data of users
+
+*/
+
 const pg = require('pg');
 require('dotenv').config();
 

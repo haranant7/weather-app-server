@@ -1,11 +1,16 @@
+/*
+
+Router for non auth routes
+
+*/
+
 const express = require('express');
 const router = express.Router();
 
 const APIModule = require('../external/api');
 
 router.post('/signUp', (req, res) => {
-
-        console.log('signup req body', req.body,req.headers['x-forwarded-for'] , req.connection.remoteAddress);
+        console.log('signup req body', req.body);
         APIModule.signUp(req.body,(error,body) => {
             res.send( body );
         })

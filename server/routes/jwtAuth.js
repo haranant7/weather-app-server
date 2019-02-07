@@ -1,3 +1,9 @@
+/*
+
+JWT authentication module
+
+*/
+
 let jwt = require('jsonwebtoken');
 require('dotenv').config()
 

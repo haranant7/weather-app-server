@@ -1,3 +1,9 @@
+/*
+
+API routes wrapper for weather API
+
+*/
+
 const request = require('request');
 require('dotenv').config();
 
@@ -50,6 +56,7 @@ function processTimeAPIResponse(resBody){
     weatherResponse["sunset"] = get24HrFormat(weatherResponse["sunset"],resBody.zoneName);
 }
 
+//get the time in 24 hour hh:mm format from timestamp
 function get24HrFormat(timestamp,zoneName){
     return new Date(timestamp*1000).toLocaleTimeString("en-US",{"timeZone":zoneName,"hour12":false}).substr(0,5);
 

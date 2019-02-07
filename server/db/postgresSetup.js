@@ -1,3 +1,8 @@
+/*
+One time initial setup of DB
+
+*/
+
 const pg = require('pg');
 require('dotenv').config();
 
